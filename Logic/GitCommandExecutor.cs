@@ -8,10 +8,17 @@ namespace GitViz.Logic
     public class GitCommandExecutor
     {
         readonly string _repositoryPath;
+        private string _gitPath;
 
         public GitCommandExecutor(string repositoryPath)
         {
             _repositoryPath = repositoryPath;
+            _gitPath = ConfigurationManager.AppSettings["GitPath"] ?? @"C:\Program Files\Git\bin\git.exe";
+            if (File.Exists("git.exe"))
+            {
+                _gitPath = "git.exe";
+            }
+            
         }
 
         public string Execute(string command)
@@ -34,10 +41,9 @@ namespace GitViz.Logic
 
         Process CreateProcess(string command)
         {
-            Process process = null;
             var startInfo = new ProcessStartInfo
             {
-                FileName = "git.exe",
+                FileName = _gitPath,
                 Arguments = command,
                 WorkingDirectory = _repositoryPath,
                 CreateNoWindow = true,
@@ -45,26 +51,8 @@ namespace GitViz.Logic
                 RedirectStandardOutput = true,
                 RedirectStandardError = true
             };
-            try
-            {
-                process = Process.Start(startInfo);
-            }
-            catch (System.Exception ex)
-            {
-                var gitPath = ConfigurationManager.AppSettings["GitPath"] ?? @"C:\Program Files\Git\bin\git.exe";
-                startInfo = new ProcessStartInfo
-                {
-                    FileName = gitPath,
-                    Arguments = command,
-                    WorkingDirectory = _repositoryPath,
-                    CreateNoWindow = true,
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true
-                };
-                process = Process.Start(startInfo);
-            }
-             
+
+            var process = Process.Start(startInfo);
             return process;
         }
     }
