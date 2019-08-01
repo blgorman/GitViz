@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 
@@ -33,6 +34,7 @@ namespace GitViz.Logic
 
         Process CreateProcess(string command)
         {
+            Process process = null;
             var startInfo = new ProcessStartInfo
             {
                 FileName = "git.exe",
@@ -43,7 +45,26 @@ namespace GitViz.Logic
                 RedirectStandardOutput = true,
                 RedirectStandardError = true
             };
-            var process = Process.Start(startInfo);
+            try
+            {
+                process = Process.Start(startInfo);
+            }
+            catch (System.Exception ex)
+            {
+                var gitPath = ConfigurationManager.AppSettings["GitPath"] ?? @"C:\Program Files\Git\bin\git.exe";
+                startInfo = new ProcessStartInfo
+                {
+                    FileName = gitPath,
+                    Arguments = command,
+                    WorkingDirectory = _repositoryPath,
+                    CreateNoWindow = true,
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true
+                };
+                process = Process.Start(startInfo);
+            }
+             
             return process;
         }
     }
