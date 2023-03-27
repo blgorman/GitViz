@@ -17,4 +17,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\GitViz.Logic\GitViz.Logic.csproj" />
+  </ItemGroup>
+
 </Project>

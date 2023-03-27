@@ -1,6 +1,7 @@
 ﻿using GitViz.Logic;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -39,7 +40,10 @@ namespace GitViz
 
         private void btnChooseRepoPath_Click(object sender, RoutedEventArgs e)
         {
-            var defaultPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            var configDefaultPath = ConfigurationManager.AppSettings.Get("defaultPath");
+            var defaultPath = string.IsNullOrWhiteSpace(configDefaultPath) 
+                                ? Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
+                                : configDefaultPath;
             var dialog = new Microsoft.Win32.SaveFileDialog();
             dialog.InitialDirectory = defaultPath; // Use current value for initial dir
             dialog.Title = "Select a Directory"; // instead of default "Save As"
